@@ -4,8 +4,107 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Portfolio</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    #gate {
+      position: fixed;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #0f0f0f;
+      z-index: 9999;
+    }
+
+    #gate form {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      width: 280px;
+    }
+
+    #gate h2 {
+      color: #fff;
+      font-family: sans-serif;
+      font-weight: 500;
+      font-size: 1.1rem;
+      text-align: center;
+      margin-bottom: 4px;
+    }
+
+    #gate input {
+      padding: 10px 14px;
+      border: 1px solid #333;
+      border-radius: 6px;
+      background: #1a1a1a;
+      color: #fff;
+      font-size: 1rem;
+      outline: none;
+    }
+
+    #gate input:focus { border-color: #555; }
+
+    #gate button {
+      padding: 10px;
+      border: none;
+      border-radius: 6px;
+      background: #fff;
+      color: #0f0f0f;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    #gate button:hover { background: #e0e0e0; }
+
+    #gate .error {
+      color: #ff5555;
+      font-family: sans-serif;
+      font-size: 0.85rem;
+      text-align: center;
+      min-height: 1em;
+    }
+  </style>
 </head>
 <body>
+
+  <div id="gate">
+    <form id="gate-form">
+      <h2>This site is under construction</h2>
+      <input type="password" id="pwd" placeholder="Enter password" autocomplete="current-password" />
+      <button type="submit">Enter</button>
+      <p class="error" id="gate-error"></p>
+    </form>
+  </div>
+
   <h1>Hello, World!</h1>
+
+  <script>
+    const HASH = '06fede0b023e5a6274bfcd807a9b33bf62c0f82bd2112ecd50b1883f1aa14846';
+
+    async function sha256(str) {
+      const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
+      return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
+    }
+
+    const gate = document.getElementById('gate');
+    const form = document.getElementById('gate-form');
+    const error = document.getElementById('gate-error');
+
+    if (sessionStorage.getItem('unlocked') === '1') gate.remove();
+
+    form.addEventListener('submit', async e => {
+      e.preventDefault();
+      const input = document.getElementById('pwd').value;
+      const hash = await sha256(input);
+      if (hash === HASH) {
+        sessionStorage.setItem('unlocked', '1');
+        gate.remove();
+      } else {
+        error.textContent = 'Incorrect password.';
+      }
+    });
+  </script>
 </body>
 </html>
