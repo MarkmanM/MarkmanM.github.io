@@ -1,0 +1,890 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>A design system &amp; token pipeline for a healthcare legacy portal</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: #08090A;
+      color: #F7F8F8;
+      font-family: 'Hanken Grotesk', sans-serif;
+      -webkit-font-smoothing: antialiased;
+      letter-spacing: -0.01em;
+    }
+    ::selection { background: rgba(94,106,210,0.35); }
+
+    /* ── Nav ── */
+    .nav {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 40px;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      background: rgba(8,9,10,0.72);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+    }
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 11px;
+    }
+    .nav-logo {
+      width: 26px;
+      height: 26px;
+      border-radius: 7px;
+      background: linear-gradient(150deg, #5E6AD2, #8B93E8);
+      box-shadow: 0 0 18px rgba(94,106,210,0.45);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 14px;
+      color: #fff;
+      flex: none;
+    }
+    .nav-name {
+      font-size: 15px;
+      font-weight: 600;
+      color: #F7F8F8;
+      white-space: nowrap;
+    }
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 28px;
+    }
+    .nav-link {
+      font-size: 14px;
+      color: #9CA0A8;
+      text-decoration: none;
+      transition: color .15s;
+    }
+    .nav-link:hover { color: #F7F8F8; }
+    .btn-secondary {
+      display: inline-flex;
+      align-items: center;
+      padding: 9px 16px;
+      font-family: 'Hanken Grotesk', sans-serif;
+      font-size: 14px;
+      font-weight: 500;
+      color: #F7F8F8;
+      background: transparent;
+      border: 1px solid rgba(255,255,255,0.16);
+      border-radius: 8px;
+      text-decoration: none;
+      cursor: pointer;
+      transition: border-color .15s, background .15s;
+      letter-spacing: -0.01em;
+    }
+    .btn-secondary:hover {
+      background: rgba(255,255,255,0.05);
+      border-color: rgba(255,255,255,0.28);
+    }
+
+    /* ── Page wrapper ── */
+    .page { position: relative; }
+    .glow-top {
+      position: absolute;
+      top: -160px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 900px;
+      height: 480px;
+      background: radial-gradient(closest-side, rgba(94,106,210,0.16), rgba(94,106,210,0) 70%);
+      pointer-events: none;
+    }
+    .container {
+      position: relative;
+      max-width: 1080px;
+      margin: 0 auto;
+      padding: 0 40px;
+    }
+
+    /* ── Header ── */
+    .header { padding-top: 56px; padding-bottom: 0; }
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13.5px;
+      color: #8A8F98;
+      text-decoration: none;
+      margin-bottom: 44px;
+      transition: color .15s;
+    }
+    .back-link:hover { color: #F7F8F8; }
+    .tags { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 24px; }
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 12.5px;
+      font-weight: 500;
+      color: #C4C8CF;
+      background: #16171A;
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 999px;
+      padding: 6px 12px;
+      white-space: nowrap;
+    }
+    .tag-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      flex: none;
+    }
+    h1 {
+      font-size: 50px;
+      line-height: 1.06;
+      font-weight: 600;
+      letter-spacing: -0.03em;
+      margin: 0 0 24px;
+      max-width: 840px;
+    }
+    .subtitle {
+      font-size: 20px;
+      line-height: 1.55;
+      color: #9CA0A8;
+      margin: 0 0 56px;
+      max-width: 660px;
+    }
+
+    /* ── Content ── */
+    .content { padding-bottom: 120px; }
+
+    /* hero */
+    .hero-fig {
+      margin: 0 0 96px;
+      display: flex;
+      justify-content: center;
+    }
+    .hero-fig img {
+      display: block;
+      width: 100%;
+      max-width: 920px;
+      height: auto;
+    }
+
+    /* meta bar */
+    .meta-bar {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1px;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 14px;
+      overflow: hidden;
+      margin-bottom: 96px;
+    }
+    .meta-cell {
+      background: #0D0E10;
+      padding: 22px 24px;
+    }
+    .meta-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.04em;
+      color: #62666D;
+      text-transform: uppercase;
+      margin-bottom: 9px;
+    }
+    .meta-value {
+      font-size: 15px;
+      font-weight: 500;
+      color: #F7F8F8;
+    }
+
+    /* two-col sections */
+    .section {
+      display: grid;
+      grid-template-columns: 180px 1fr;
+      gap: 48px;
+      margin-bottom: 64px;
+    }
+    .section-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      letter-spacing: 0.08em;
+      color: #62666D;
+      text-transform: uppercase;
+      padding-top: 6px;
+    }
+    .section-num {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      color: #5E6AD2;
+      padding-top: 5px;
+    }
+    .section-body { max-width: 680px; }
+    h2 {
+      font-size: 28px;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      margin: 0 0 20px;
+    }
+    h3 {
+      font-size: 23px;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      margin: 0 0 16px;
+    }
+    .prose {
+      font-size: 17px;
+      line-height: 1.7;
+      color: #C4C8CF;
+      margin: 0 0 18px;
+    }
+    .prose-dim {
+      font-size: 17px;
+      line-height: 1.7;
+      color: #9CA0A8;
+      margin: 0 0 18px;
+    }
+    .prose-dim:last-child { margin-bottom: 0; }
+    .prose-dim strong { color: #F7F8F8; font-weight: 500; }
+
+    /* goals & challenges */
+    .goals-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 32px;
+    }
+    .list-heading {
+      font-size: 15px;
+      font-weight: 600;
+      color: #F7F8F8;
+      margin-bottom: 16px;
+    }
+    .list-items { display: flex; flex-direction: column; gap: 14px; }
+    .list-item {
+      display: flex;
+      gap: 11px;
+      font-size: 14.5px;
+      line-height: 1.5;
+      color: #9CA0A8;
+    }
+    .list-item-arrow { color: #5E6AD2; flex: none; }
+    .list-item-dot { color: #DB6E5A; flex: none; }
+
+    /* approach header */
+    .approach-header {
+      border-top: 1px solid rgba(255,255,255,0.08);
+      padding-top: 56px;
+      margin-bottom: 56px;
+    }
+    .approach-kicker {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      letter-spacing: 0.08em;
+      color: #5E6AD2;
+      text-transform: uppercase;
+      margin-bottom: 14px;
+    }
+    .approach-title {
+      font-size: 32px;
+      font-weight: 600;
+      letter-spacing: -0.025em;
+      max-width: 720px;
+    }
+
+    /* prose sections with 17px */
+    .prose-16 {
+      font-size: 16px;
+      line-height: 1.7;
+      color: #9CA0A8;
+      margin: 0 0 16px;
+    }
+    .prose-16:last-child { margin-bottom: 0; }
+    .prose-16 strong { color: #F7F8F8; font-weight: 500; }
+
+    /* token tier cards */
+    .tier-cards { display: flex; flex-direction: column; gap: 12px; margin-bottom: 8px; }
+    .tier-card {
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 12px;
+      background: #0D0E10;
+      padding: 18px 20px;
+    }
+    .tier-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: #F7F8F8;
+      margin-bottom: 5px;
+    }
+    .tier-body {
+      font-size: 14px;
+      line-height: 1.55;
+      color: #8A8F98;
+    }
+
+    /* figures */
+    .figures-col { display: flex; flex-direction: column; gap: 28px; }
+    .fig-frame {
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 16px;
+      overflow: hidden;
+      background: #FBFAF8;
+    }
+    .fig-frame img { display: block; width: 100%; height: auto; }
+    figcaption {
+      font-size: 13px;
+      color: #62666D;
+      margin-top: 12px;
+    }
+    .fig-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+
+    /* build steps */
+    .build-steps { display: flex; flex-direction: column; gap: 14px; }
+    .build-step {
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 12px;
+      background: #0D0E10;
+      padding: 18px 20px;
+    }
+    .build-step-k {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: #5E6AD2;
+      padding-top: 2px;
+      flex: none;
+    }
+    .build-step-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: #F7F8F8;
+      margin-bottom: 4px;
+    }
+    .build-step-body {
+      font-size: 14px;
+      line-height: 1.55;
+      color: #8A8F98;
+    }
+
+    /* pipeline figures full-width */
+    .pipeline-figures { display: flex; flex-direction: column; gap: 28px; margin-bottom: 40px; }
+
+    /* beyond design owned list */
+    .owned-items { display: flex; flex-direction: column; gap: 18px; }
+    .owned-item { display: flex; gap: 14px; align-items: flex-start; }
+    .owned-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #5E6AD2;
+      flex: none;
+      margin-top: 9px;
+    }
+    .owned-text {
+      font-size: 16px;
+      line-height: 1.6;
+      color: #9CA0A8;
+    }
+    .owned-text strong { color: #F7F8F8; font-weight: 600; }
+
+    /* outcomes */
+    .outcomes-header {
+      border-top: 1px solid rgba(255,255,255,0.08);
+      padding-top: 56px;
+      margin-bottom: 32px;
+    }
+    .outcomes-kicker {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      letter-spacing: 0.08em;
+      color: #5E6AD2;
+      text-transform: uppercase;
+      margin-bottom: 14px;
+    }
+    .outcomes-title {
+      font-size: 32px;
+      font-weight: 600;
+      letter-spacing: -0.025em;
+      max-width: 720px;
+    }
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-bottom: 36px;
+    }
+    .metric-card {
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 16px;
+      background: #0D0E10;
+      padding: 28px 24px;
+    }
+    .metric-num {
+      font-size: 40px;
+      font-weight: 600;
+      letter-spacing: -0.03em;
+      color: #F7F8F8;
+      margin-bottom: 8px;
+    }
+    .metric-label {
+      font-size: 13.5px;
+      color: #8A8F98;
+      line-height: 1.45;
+    }
+    .outcomes-list { display: flex; flex-direction: column; gap: 14px; }
+    .outcome-item {
+      display: flex;
+      gap: 12px;
+      font-size: 16px;
+      line-height: 1.6;
+      color: #9CA0A8;
+    }
+    .outcome-check { color: #3FB950; flex: none; }
+
+    /* quote block */
+    .quote-block {
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 18px;
+      background: linear-gradient(160deg, #0F1012, #0A0B0D);
+      padding: 56px 48px;
+      position: relative;
+      overflow: hidden;
+      margin-bottom: 96px;
+    }
+    .quote-glow {
+      position: absolute;
+      top: -120px;
+      right: -60px;
+      width: 480px;
+      height: 300px;
+      background: radial-gradient(closest-side, rgba(94,106,210,0.18), rgba(94,106,210,0) 70%);
+      pointer-events: none;
+    }
+    .quote-kicker {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      letter-spacing: 0.06em;
+      color: #62666D;
+      text-transform: uppercase;
+      margin-bottom: 20px;
+      position: relative;
+    }
+    .quote-text {
+      font-size: 24px;
+      line-height: 1.5;
+      font-weight: 500;
+      letter-spacing: -0.02em;
+      color: #F7F8F8;
+      max-width: 760px;
+      position: relative;
+    }
+    .quote-muted { color: #9CA0A8; }
+    .quote-accent { color: #8B93E8; }
+
+    /* bottom nav */
+    .bottom-nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-top: 1px solid rgba(255,255,255,0.08);
+      padding: 40px 8px 0;
+      text-decoration: none;
+      cursor: pointer;
+    }
+    .bottom-nav-kicker {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.06em;
+      color: #62666D;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+    .bottom-nav-title {
+      font-size: 28px;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      color: #F7F8F8;
+    }
+    .bottom-nav-arrow { font-size: 24px; color: #5E6AD2; }
+
+    /* section spacers */
+    .mb-88 { margin-bottom: 88px; }
+    .mb-96 { margin-bottom: 96px; }
+    .mb-40 { margin-bottom: 40px; }
+    .spacer-48 { height: 48px; }
+
+    /* beyond design border */
+    .beyond-design {
+      border-top: 1px solid rgba(255,255,255,0.08);
+      padding-top: 56px;
+      margin-bottom: 96px;
+    }
+    .beyond-h2 {
+      font-size: 26px;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      margin: 0 0 24px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Nav -->
+  <nav class="nav">
+    <div class="nav-brand">
+      <div class="nav-logo">A</div>
+      <span class="nav-name">Alex Rivera</span>
+    </div>
+    <div class="nav-right">
+      <a href="index.html" class="nav-link">Work</a>
+      <a href="#" class="nav-link">About</a>
+      <a href="#" class="nav-link">Writing</a>
+      <a href="#" class="btn-secondary">Get in touch</a>
+    </div>
+  </nav>
+
+  <!-- Page -->
+  <div class="page">
+    <div class="glow-top"></div>
+
+    <!-- Header -->
+    <div class="container header">
+      <a href="index.html" class="back-link">← Back to work</a>
+
+      <div class="tags">
+        <span class="tag"><span class="tag-dot" style="background:#5E6AD2;"></span>Design Systems</span>
+        <span class="tag"><span class="tag-dot" style="background:#3FB950;"></span>Token Pipeline</span>
+        <span class="tag"><span class="tag-dot" style="background:#DB6E5A;"></span>Healthcare IT</span>
+        <span class="tag"><span class="tag-dot" style="background:#E3B341;"></span>DesignOps</span>
+      </div>
+
+      <h1>A design system &amp; token pipeline for a healthcare legacy portal</h1>
+      <p class="subtitle">Reverse-engineering a 20-year-old healthcare product into a tokenized, automated design system — and a Figma-to-code pipeline that kept eight frontend teams in sync without a single manual handoff.</p>
+    </div>
+
+    <!-- Content -->
+    <div class="container content">
+
+      <!-- Hero -->
+      <figure class="hero-fig">
+        <img src="assets/adding-design-system/hero-v2.png" alt="Designer to Figma to Token Studio to GitHub pipeline" />
+      </figure>
+
+      <!-- Meta bar -->
+      <div class="meta-bar">
+        <div class="meta-cell">
+          <div class="meta-label">Role</div>
+          <div class="meta-value">Lead Designer</div>
+        </div>
+        <div class="meta-cell">
+          <div class="meta-label">Team</div>
+          <div class="meta-value">4 designers · 8 FE streams</div>
+        </div>
+        <div class="meta-cell">
+          <div class="meta-label">Duration</div>
+          <div class="meta-value">2024–2025 · ~2 yrs</div>
+        </div>
+        <div class="meta-cell">
+          <div class="meta-label">Domain</div>
+          <div class="meta-value">Healthcare IT</div>
+        </div>
+      </div>
+
+      <!-- Problem -->
+      <div class="section">
+        <div class="section-label">The problem</div>
+        <div class="section-body">
+          <h2>Twenty years of organic growth, no design foundation</h2>
+          <p class="prose">I joined a product built on a 20-year-old legacy system with no design foundation at all — no source files, no UI kit, no design system. The only reference was the compiled code running in production.</p>
+          <p class="prose-dim">The audit revealed inconsistent colors and spacing throughout, duplicated components serving the same purpose in different ways, documentation that no longer matched production, and UI patterns that varied screen to screen without logic. The product had grown for two decades without design governance, and it showed.</p>
+          <p class="prose-dim">At the same time, the frontend team was rebuilding the entire system on MUI with micro-frontends — eight parallel streams that needed a design foundation before they could start. One constraint shaped everything: <strong>preserve the existing look and feel.</strong> This wasn't a redesign. It was standardizing what already existed without breaking the continuity users relied on.</p>
+        </div>
+      </div>
+
+      <!-- Goals & Challenges -->
+      <div class="section mb-96">
+        <div class="section-label">Goals &amp; challenges</div>
+        <div class="section-body">
+          <div class="goals-grid">
+            <div>
+              <div class="list-heading">Goals</div>
+              <div class="list-items">
+                <div class="list-item"><span class="list-item-arrow">→</span><span>Replicate and systematize the legacy UI in Figma as a working source of truth</span></div>
+                <div class="list-item"><span class="list-item-arrow">→</span><span>Build a tokenized design system for visual and functional consistency</span></div>
+                <div class="list-item"><span class="list-item-arrow">→</span><span>Make tokens compatible with the future redesign — scalable, not just functional</span></div>
+                <div class="list-item"><span class="list-item-arrow">→</span><span>Enable 8 FE teams to implement consistently without repeated design intervention</span></div>
+                <div class="list-item"><span class="list-item-arrow">→</span><span>Recreate 200+ screens while preserving the existing look and feel</span></div>
+              </div>
+            </div>
+            <div>
+              <div class="list-heading">Challenges</div>
+              <div class="list-items">
+                <div class="list-item"><span class="list-item-dot">·</span><span>No source files, guidelines, or docs — reverse-engineered from production</span></div>
+                <div class="list-item"><span class="list-item-dot">·</span><span>Scale demanded a thorough audit before any structuring could begin</span></div>
+                <div class="list-item"><span class="list-item-dot">·</span><span>Documentation mismatched the live environment across colour, size, padding, structure</span></div>
+                <div class="list-item"><span class="list-item-dot">·</span><span>Tokens had to fit the future redesign, not only the legacy product</span></div>
+                <div class="list-item"><span class="list-item-dot">·</span><span>Full alignment required across 8 FE streams building in parallel</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Approach header -->
+      <div class="approach-header">
+        <div class="approach-kicker">My approach</div>
+        <div class="approach-title">Audit, architecture, and an automated pipeline</div>
+      </div>
+
+      <!-- 01 Audit -->
+      <div class="section mb-88">
+        <div class="section-num">01 — Audit first</div>
+        <div class="section-body">
+          <h3>Catalogue everything before designing anything</h3>
+          <p class="prose-16">The first decision I pushed for was to audit before building. I led a comprehensive UI inventory of the production system — cataloguing every inconsistency, duplicated element, and color and spacing value in use, then scrutinizing the remaining documentation against the live environment.</p>
+          <p class="prose-16">The audit also surfaced accessibility gaps — insufficient contrast, inconsistent keyboard navigation, missing alt text. I flagged and addressed these during structuring, aligning to WCAG throughout. The inventory wasn't just documentation; it became the foundation for every token, scoping, and prioritization decision that followed.</p>
+        </div>
+      </div>
+
+      <!-- 02 Token Architecture -->
+      <div class="section mb-40">
+        <div class="section-num">02 — Token architecture</div>
+        <div class="section-body">
+          <h3>A three-tier structure built to scale</h3>
+          <p class="prose-16">To build something that could scale across this product and future ones, I defined a three-tier token structure — informed by open-source design systems and adapted to work for both design and frontend.</p>
+          <div class="tier-cards">
+            <div class="tier-card">
+              <div class="tier-title">Globals</div>
+              <div class="tier-body">Foundational decisions extracted from the legacy system — colors, spacing, font sizes — named abstractly so the core can scale to new brands.</div>
+            </div>
+            <div class="tier-card">
+              <div class="tier-title">Aliases</div>
+              <div class="tier-body">Map globals to semantic intent, so high-level decisions stay stable even as the raw values beneath them evolve.</div>
+            </div>
+            <div class="tier-card">
+              <div class="tier-title">Component-specific tokens</div>
+              <div class="tier-body">The highest specificity — every component part (text, icon, background, stroke, elevation) maps to its own token, controllable and scalable independently. Names are descriptive yet concise, and hierarchical from component to styled part.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Token figures -->
+      <div class="section mb-88">
+        <div></div>
+        <div class="figures-col">
+          <figure>
+            <div class="fig-frame"><img src="assets/adding-design-system/tokens-structure.png" alt="Tokens structure pyramid" /></div>
+            <figcaption>Specificity vs. reach — a raw value resolves up through a global token to a component-specific token.</figcaption>
+          </figure>
+          <div class="fig-grid-2">
+            <figure>
+              <div class="fig-frame"><img src="assets/adding-design-system/global-tokens.png" alt="Global tokens" /></div>
+              <figcaption>Global colour scales managed in Token Studio.</figcaption>
+            </figure>
+            <figure>
+              <div class="fig-frame"><img src="assets/adding-design-system/component-tokens.png" alt="Component-specific tokens" /></div>
+              <figcaption>Component / variant / state / property naming on a button.</figcaption>
+            </figure>
+          </div>
+        </div>
+      </div>
+
+      <!-- 03 Component Architecture -->
+      <div class="section mb-88">
+        <div class="section-num">03 — Component architecture</div>
+        <div class="section-body">
+          <h3>Atomic design as a shared language</h3>
+          <p class="prose-16">I structured component creation around atomic design — atoms, molecules, organisms — to create a clear, reusable hierarchy and a shared vocabulary between design and frontend.</p>
+          <p class="prose-16">For every component I mapped the full anatomy before any build began: the properties, variants, and states needed to make it genuinely flexible without creating maintenance debt. Most were built as auto layouts so frontend could implement them accurately, with accessibility — contrast and keyboard support — handled at the component level.</p>
+        </div>
+      </div>
+
+      <!-- 04 Build & Documentation -->
+      <div class="section mb-88">
+        <div class="section-num">04 — Build &amp; documentation</div>
+        <div class="section-body">
+          <h3>A repeatable contract between design and code</h3>
+          <div class="build-steps">
+            <div class="build-step">
+              <span class="build-step-k">01</span>
+              <div>
+                <div class="build-step-title">Define anatomy</div>
+                <div class="build-step-body">Variants, states, and properties mapped before any build begins.</div>
+              </div>
+            </div>
+            <div class="build-step">
+              <span class="build-step-k">02</span>
+              <div>
+                <div class="build-step-title">Deep FE alignment</div>
+                <div class="build-step-body">For every token and component we aligned on layer structure, padding vs. margin, prop and layer naming — so the Figma and coded components were true mirrors, not approximations.</div>
+              </div>
+            </div>
+            <div class="build-step">
+              <span class="build-step-k">03</span>
+              <div>
+                <div class="build-step-title">Pixel-perfect delivery</div>
+                <div class="build-step-body">Mockups shipped with full documentation: sizes, colour tokens, paddings, behavior, variants, states, and anatomy the FE team used directly.</div>
+              </div>
+            </div>
+            <div class="build-step">
+              <span class="build-step-k">04</span>
+              <div>
+                <div class="build-step-title">Design QA in dev tools</div>
+                <div class="build-step-body">I inspected the HTML and CSS in-browser to verify spacing, token values, and naming matched the spec before sprint demo. Discrepancies were documented and fed back before sign-off.</div>
+              </div>
+            </div>
+          </div>
+          <p class="prose-16" style="margin-top:24px;">This level of collaboration meant no interpretation gap. When a developer opened a component in Storybook, the structure, naming, and logic matched Figma exactly — the documentation was a shared contract, not an afterthought.</p>
+        </div>
+      </div>
+
+      <!-- 05 Pipeline -->
+      <div class="section mb-40">
+        <div class="section-num">05 — The pipeline</div>
+        <div class="section-body">
+          <h3>Automating Figma → GitHub → Storybook</h3>
+          <p class="prose-16">The most technically complex part was building an automated pipeline between Figma, GitHub, and Storybook with the frontend lead — a setup neither of us had done before. <strong>Token Studio for Figma</strong> was the starting point: tokens defined in Figma could be pushed straight into code.</p>
+          <p class="prose-16">From there, <strong>GitHub Actions</strong> transformed token exports into the syntax our frontend could consume. Every token change was treated like a code change — branched, reviewed via PR, approved, merged — giving the pipeline version control and traceability. Stabilizing the pull-push logic across eight active streams took real iteration, but when it worked, any token update in Figma propagated automatically through to the codebase and Storybook.</p>
+        </div>
+      </div>
+
+      <!-- Pipeline figures -->
+      <div class="pipeline-figures">
+        <figure>
+          <div class="fig-frame"><img src="assets/adding-design-system/pipeline.png" alt="Figma to GitHub to Storybook pipeline" /></div>
+          <figcaption>The end-to-end flow: a designer updates tokens in Token Studio, which triggers a GitHub Action, code review, deploy to Storybook, then production.</figcaption>
+        </figure>
+        <div class="fig-grid-2">
+          <figure>
+            <div class="fig-frame"><img src="assets/adding-design-system/pipeline-designers.png" alt="Designers flow" /></div>
+            <figcaption>Designers' flow — update, push, and export tokens.</figcaption>
+          </figure>
+          <figure>
+            <div class="fig-frame"><img src="assets/adding-design-system/pipeline-developers.png" alt="Developers flow" /></div>
+            <figcaption>Developers' flow — review, deploy, and pull tokens back to Figma.</figcaption>
+          </figure>
+        </div>
+        <div class="fig-grid-2">
+          <figure>
+            <div class="fig-frame"><img src="assets/adding-design-system/tokens-update-steps.png" alt="Token update steps" /></div>
+            <figcaption>Update a token, save, push to GitHub — directly from Token Studio.</figcaption>
+          </figure>
+          <figure>
+            <div class="fig-frame"><img src="assets/adding-design-system/tokens-update-github.png" alt="Token update GitHub diff" /></div>
+            <figcaption>The same change lands in GitHub as a reviewable, versioned diff.</figcaption>
+          </figure>
+        </div>
+        <figure>
+          <div class="fig-frame"><img src="assets/adding-design-system/icons-workflow.png" alt="Icons automation workflow" /></div>
+          <figcaption>Icon automation followed the same principle — designers trigger SVG exports from Figma, versioned through to production.</figcaption>
+        </figure>
+        <figure>
+          <div class="fig-frame"><img src="assets/adding-design-system/comparison.png" alt="Non-automated vs token-based design system" /></div>
+          <figcaption>Why it mattered: a single token update at the source cascades across design and code, eliminating manual updates and design–dev drift.</figcaption>
+        </figure>
+      </div>
+
+      <div class="spacer-48"></div>
+
+      <!-- 06 Scale -->
+      <div class="section mb-96">
+        <div class="section-num">06 — Scale</div>
+        <div class="section-body">
+          <h3>200+ screens, built on layout rules</h3>
+          <p class="prose-16">To support eight teams in parallel, I established a page-level auto layout approach for screen creation — letting the team deliver 200+ screens efficiently, with positioning, sizing, and spacing driven by predefined rules. It also made frontend implementation more accurate, reducing rework during handoff.</p>
+        </div>
+      </div>
+
+      <!-- Beyond Design -->
+      <div class="section beyond-design">
+        <div class="section-label">Beyond design</div>
+        <div class="section-body">
+          <div class="beyond-h2">What I owned beyond the pixels</div>
+          <div class="owned-items">
+            <div class="owned-item">
+              <span class="owned-dot"></span>
+              <div class="owned-text"><strong>Roadmap &amp; backlog</strong> — defined what got built, in what order, and why — balancing design capacity against 8 FE streams.</div>
+            </div>
+            <div class="owned-item">
+              <span class="owned-dot"></span>
+              <div class="owned-text"><strong>Timeline &amp; estimations</strong> — accountable for delivery across the team throughout the project.</div>
+            </div>
+            <div class="owned-item">
+              <span class="owned-dot"></span>
+              <div class="owned-text"><strong>Stakeholder communication</strong> — weekly alignment with the client's design department and leadership across a 200+ person team.</div>
+            </div>
+            <div class="owned-item">
+              <span class="owned-dot"></span>
+              <div class="owned-text"><strong>Governance model</strong> — defined a hybrid framework — central ownership plus product-team contribution — covering contribution rules, promotion to the shared library, and RACI.</div>
+            </div>
+            <div class="owned-item">
+              <span class="owned-dot"></span>
+              <div class="owned-text"><strong>DesignOps for the client</strong> — knowledge-sharing and workflow enablement for the client's own design department alongside delivery.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Outcomes -->
+      <div class="outcomes-header">
+        <div class="outcomes-kicker">Outcomes</div>
+        <div class="outcomes-title">Consistency for the first time in the product's history</div>
+      </div>
+      <div class="metrics-grid">
+        <div class="metric-card">
+          <div class="metric-num">200+</div>
+          <div class="metric-label">Screens recreated with new components &amp; tokens</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-num">8</div>
+          <div class="metric-label">Parallel frontend streams on one governed foundation</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-num">3-tier</div>
+          <div class="metric-label">Token architecture: globals, aliases, component</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-num">1</div>
+          <div class="metric-label">Figma change propagates to code automatically</div>
+        </div>
+      </div>
+      <div class="section mb-96">
+        <div></div>
+        <div class="outcomes-list">
+          <div class="outcome-item"><span class="outcome-check">✓</span><span>Visual consistency for the first time in the product's history — one design language across every screen</span></div>
+          <div class="outcome-item"><span class="outcome-check">✓</span><span>8 parallel FE teams building from a shared, governed foundation with no ambiguity</span></div>
+          <div class="outcome-item"><span class="outcome-check">✓</span><span>Token updates propagated automatically from a single Figma change — no manual handoff</span></div>
+          <div class="outcome-item"><span class="outcome-check">✓</span><span>Duplicate components eliminated; one authoritative version of each element</span></div>
+          <div class="outcome-item"><span class="outcome-check">✓</span><span>A foundation for dark mode, multi-brand theming, and new products without rebuilding</span></div>
+          <div class="outcome-item"><span class="outcome-check">✓</span><span>Design and Storybook libraries kept continuously in sync — a reliable single source of truth</span></div>
+        </div>
+      </div>
+
+      <!-- Quote -->
+      <div class="quote-block">
+        <div class="quote-glow"></div>
+        <div class="quote-kicker">What I learned</div>
+        <p class="quote-text">"The best design-to-dev handoffs aren't handoffs at all. When design and code share the same source of truth, the conversation shifts from <span class="quote-muted">'here's the spec'</span> to <span class="quote-accent">'here's the system — let's build it together.'</span>"</p>
+      </div>
+
+      <!-- Bottom nav -->
+      <a href="index.html" class="bottom-nav">
+        <div>
+          <div class="bottom-nav-kicker">Back to</div>
+          <div class="bottom-nav-title">All work</div>
+        </div>
+        <span class="bottom-nav-arrow">→</span>
+      </a>
+
+    </div>
+  </div>
+
+</body>
+</html>
